@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Definitions\**" />
+    <Compile Remove="DependencyInjection\**" />
+    <EmbeddedResource Remove="Definitions\**" />
+    <EmbeddedResource Remove="DependencyInjection\**" />
+    <None Remove="Definitions\**" />
+    <None Remove="DependencyInjection\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="IRepository.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Ps.EfCoreRepository.SqlServer" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataWebApp.Logging\DataWebApp.Logging.csproj" />
+  </ItemGroup>
+
+</Project>

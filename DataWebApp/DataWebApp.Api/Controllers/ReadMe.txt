@@ -1,0 +1,1 @@
+﻿1. Every Controllder should be inherited from AppBaseController 
