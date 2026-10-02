@@ -1,0 +1,289 @@
+pipeline:
+  name: Repository Build
+  identifier: repository_build
+  projectIdentifier: <+input>
+  orgIdentifier: default
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.repository_source
+        repoName: phetanshi/DataWebApp
+        build:
+          type: branch
+          spec:
+            branch: main
+  stages:
+  - stage:
+      name: DataWebApp/DataWebApp.Api (1)
+      identifier: project_1
+      type: CI
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              type: Run
+              name: Restore
+              identifier: restore_1
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Api && dotnet restore DataWebApp.Api.csproj
+          - step:
+              type: Run
+              name: Build
+              identifier: build_2
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Api && dotnet build DataWebApp.Api.csproj
+                  --configuration Release --no-restore
+          - step:
+              type: Run
+              name: Publish
+              identifier: publish_3
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Api && dotnet publish DataWebApp.Api.csproj
+                  --configuration Release --no-build
+        infrastructure:
+          type: KubernetesDirect
+          spec:
+            connectorRef: account.repo_pipeline_k8s
+            namespace: harness-ci
+            delegateSelectors:
+            - pipeline-generator-linux
+            automountServiceAccountToken: true
+            os: Linux
+  - stage:
+      name: DataWebApp/DataWebApp.Api/ClientApp (2)
+      identifier: project_2
+      type: CI
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              type: Run
+              name: Restore
+              identifier: restore_1
+              spec:
+                connectorRef: account.dockerhub
+                image: node:lts
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Api/ClientApp && npm ci
+          - step:
+              type: Run
+              name: Build
+              identifier: build_2
+              spec:
+                connectorRef: account.dockerhub
+                image: node:lts
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Api/ClientApp && npm run build
+          - step:
+              type: Run
+              name: Test
+              identifier: test_3
+              spec:
+                connectorRef: account.dockerhub
+                image: node:lts
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Api/ClientApp && npm run test
+        infrastructure:
+          type: KubernetesDirect
+          spec:
+            connectorRef: account.repo_pipeline_k8s
+            namespace: harness-ci
+            delegateSelectors:
+            - pipeline-generator-linux
+            automountServiceAccountToken: true
+            os: Linux
+  - stage:
+      name: DataWebApp/DataWebApp.Data (3)
+      identifier: project_3
+      type: CI
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              type: Run
+              name: Restore
+              identifier: restore_1
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Data && dotnet restore DataWebApp.Data.csproj
+          - step:
+              type: Run
+              name: Build
+              identifier: build_2
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Data && dotnet build DataWebApp.Data.csproj
+                  --configuration Release --no-restore
+          - step:
+              type: Run
+              name: Publish
+              identifier: publish_3
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Data && dotnet publish DataWebApp.Data.csproj
+                  --configuration Release --no-build
+        infrastructure:
+          type: KubernetesDirect
+          spec:
+            connectorRef: account.repo_pipeline_k8s
+            namespace: harness-ci
+            delegateSelectors:
+            - pipeline-generator-linux
+            automountServiceAccountToken: true
+            os: Linux
+  - stage:
+      name: DataWebApp/DataWebApp.Dtos (4)
+      identifier: project_4
+      type: CI
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              type: Run
+              name: Restore
+              identifier: restore_1
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Dtos && dotnet restore DataWebApp.Dtos.csproj
+          - step:
+              type: Run
+              name: Build
+              identifier: build_2
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Dtos && dotnet build DataWebApp.Dtos.csproj
+                  --configuration Release --no-restore
+          - step:
+              type: Run
+              name: Publish
+              identifier: publish_3
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Dtos && dotnet publish DataWebApp.Dtos.csproj
+                  --configuration Release --no-build
+        infrastructure:
+          type: KubernetesDirect
+          spec:
+            connectorRef: account.repo_pipeline_k8s
+            namespace: harness-ci
+            delegateSelectors:
+            - pipeline-generator-linux
+            automountServiceAccountToken: true
+            os: Linux
+  - stage:
+      name: DataWebApp/DataWebApp.Logging (5)
+      identifier: project_5
+      type: CI
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              type: Run
+              name: Restore
+              identifier: restore_1
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Logging && dotnet restore DataWebApp.Logging.csproj
+          - step:
+              type: Run
+              name: Build
+              identifier: build_2
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Logging && dotnet build DataWebApp.Logging.csproj
+                  --configuration Release --no-restore
+          - step:
+              type: Run
+              name: Publish
+              identifier: publish_3
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.Logging && dotnet publish DataWebApp.Logging.csproj
+                  --configuration Release --no-build
+        infrastructure:
+          type: KubernetesDirect
+          spec:
+            connectorRef: account.repo_pipeline_k8s
+            namespace: harness-ci
+            delegateSelectors:
+            - pipeline-generator-linux
+            automountServiceAccountToken: true
+            os: Linux
+  - stage:
+      name: DataWebApp/DataWebApp.UnitTest (6)
+      identifier: project_6
+      type: CI
+      spec:
+        cloneCodebase: true
+        execution:
+          steps:
+          - step:
+              type: Run
+              name: Restore
+              identifier: restore_1
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.UnitTest && dotnet restore DataWebApp.UnitTest.csproj
+          - step:
+              type: Run
+              name: Build
+              identifier: build_2
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.UnitTest && dotnet build DataWebApp.UnitTest.csproj
+                  --configuration Release --no-restore
+          - step:
+              type: Run
+              name: Test
+              identifier: test_3
+              spec:
+                connectorRef: account.dockerhub
+                image: mcr.microsoft.com/dotnet/sdk:7.0
+                shell: Sh
+                command: cd DataWebApp/DataWebApp.UnitTest && dotnet test DataWebApp.UnitTest.csproj
+                  --configuration Release --no-build
+        infrastructure:
+          type: KubernetesDirect
+          spec:
+            connectorRef: account.repo_pipeline_k8s
+            namespace: harness-ci
+            delegateSelectors:
+            - pipeline-generator-linux
+            automountServiceAccountToken: true
+            os: Linux
